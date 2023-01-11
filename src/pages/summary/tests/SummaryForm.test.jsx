@@ -1,8 +1,9 @@
 import { screen, render, fireEvent } from '@testing-library/react'
-import SummeryForm from '../SummaryForm'
+import SummaryForm from '../SummaryForm'
+import userEvent from '@testing-library/user-event'
 
 test('Initial conditions', () => {
-  render(<SummeryForm />)
+  render(<SummaryForm />)
   const checkbox = screen.getByRole('checkbox', {
     name: /terms and conditions/i,
   })
@@ -13,17 +14,42 @@ test('Initial conditions', () => {
   expect(confirmButton).toBeDisabled()
 })
 
-test('Checkbox enables button on first click and disable on second click', () => {
-  render(<SummeryForm />)
+test('Checkbox enables button on first click and disable on second click', async () => {
+  const user = userEvent.setup()
+
+  render(<SummaryForm />)
   const checkbox = screen.getByRole('checkbox', {
     name: /terms and conditions/i,
   })
   const confirmButton = screen.getByRole('button', {
     name: /confirm order/i,
   })
-  fireEvent.click(checkbox)
+  // fireEvent.click(checkbox)
+  await user.click(checkbox)
   expect(confirmButton).toBeEnabled()
 
-  fireEvent.click(checkbox)
+  // fireEvent.click(checkbox)
+  await user.click(checkbox)
   expect(confirmButton).toBeDisabled()
+})
+
+test('popover responds to hover', async () => {
+  const user = userEvent.setup()
+  render(<SummaryForm />)
+
+  // popover starts out hidden
+  const nullPopover = screen.queryByText(
+    /No ice cream will actually be delivered/i
+  )
+  expect(nullPopover).not.toBeInTheDocument()
+
+  // popover appears on mouseover of checkbox label
+  const termsAndConditions = screen.getByText(/terms and conditions/i)
+  await user.hover(termsAndConditions)
+  const popover = screen.getByText(/No ice cream will actually be delivered/i)
+  expect(popover).toBeInTheDocument()
+
+  // popover disappears when we mouse out
+  await user.unhover(termsAndConditions)
+  expect(popover).not.toBeInTheDocument()
 })
