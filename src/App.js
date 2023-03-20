@@ -1,7 +1,7 @@
 import logo from './logo.svg'
 import './App.css'
 // import SummaryForm from './pages/summary/SummaryForm'
-import Options from './pages/entry/Options'
+import OptionsEntry from './pages/entry/Options'
 function App() {
   return (
     <div className='App'>
@@ -18,7 +18,7 @@ function App() {
         >
           Learn React
         </a>
-        <Options />
+        <OptionsEntry />
       </header>
     </div>
   )
